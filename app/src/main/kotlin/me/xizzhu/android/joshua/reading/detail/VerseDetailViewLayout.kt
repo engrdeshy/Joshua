@@ -38,8 +38,8 @@ import me.xizzhu.android.joshua.ui.*
 class VerseDetailViewLayout : FrameLayout {
     companion object {
         const val VERSE_DETAIL_VERSES = 0
-        const val VERSE_DETAIL_NOTE = 1
-        const val VERSE_DETAIL_CROSS_REFERENCES = 2
+        const val VERSE_DETAIL_CROSS_REFERENCES = 1
+        const val VERSE_DETAIL_NOTE = 2
         const val VERSE_DETAIL_STRONG_NUMBER = 3
 
         @IntDef(VERSE_DETAIL_VERSES, VERSE_DETAIL_NOTE, VERSE_DETAIL_CROSS_REFERENCES, VERSE_DETAIL_STRONG_NUMBER)

@@ -38,8 +38,8 @@ import me.xizzhu.android.joshua.ui.setPrimaryTextSize
 class VerseDetailPagerAdapter(context: Context) : RecyclerView.Adapter<VerseDetailPage<*>>() {
     companion object {
         const val PAGE_VERSES = 0
-        const val PAGE_NOTE = 1
-        const val PAGE_CROSS_REFERENCES = 2
+        const val PAGE_CROSS_REFERENCES = 1
+        const val PAGE_NOTE = 2
         const val PAGE_STRONG_NUMBER = 3
         private const val PAGE_COUNT = 4
     }
