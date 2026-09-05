@@ -17,6 +17,8 @@
 import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+
 plugins {
     id("com.android.application")
     id(Dependencies.Hilt.plugin)
@@ -64,12 +66,12 @@ android {
 
     signingConfigs {
         create("release") {
-            val keystorePropertiesFile = File("keystore.properties")
             if (keystorePropertiesFile.exists()) {
                 val keystoreProperties = Properties()
                 keystoreProperties.load(keystorePropertiesFile.inputStream())
 
-                storeFile = File(rootDir, keystoreProperties.getProperty("KEYSTORE_FILE"))
+                val configuredStoreFile = File(keystoreProperties.getProperty("KEYSTORE_FILE"))
+                storeFile = if (configuredStoreFile.isAbsolute) configuredStoreFile else File(rootDir, configuredStoreFile.path)
                 storePassword = keystoreProperties.getProperty("KEYSTORE_PASSWORD")
                 keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
                 keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
@@ -81,7 +83,7 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
-            if (File("keystore.properties").exists()) {
+            if (keystorePropertiesFile.exists()) {
                 signingConfig = signingConfigs.getByName("release")
             }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
