@@ -56,6 +56,12 @@ class ChapterListView : ExpandableListView {
     }
 
     private fun expandBook(bookIndex: Int) {
+        // The saved verse and translated book names are loaded by separate flows.
+        // On a cold start the verse can arrive first, while the adapter has no
+        // groups yet. ExpandableListView assumes this index is valid and crashes
+        // while asking the adapter for its child count if it is not.
+        if (bookIndex !in 0 until adapter.groupCount) return
+
         val groupToExpand = bookIndex
         if (isGroupExpanded(groupToExpand)) {
             return
@@ -84,7 +90,6 @@ class ChapterListView : ExpandableListView {
     }
 
     fun expandCurrentBook() {
-        if (currentBookIndex == -1) return
         expandBook(bookIndex = currentBookIndex)
     }
 

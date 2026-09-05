@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -170,9 +171,27 @@ class ReadingActivity : BaseActivity<ActivityReadingBinding, ReadingViewModel>()
         super.onCreate(savedInstanceState)
 
         initializeUi()
+        initializeBackNavigation()
         observeSettings()
         observeCurrentReadingStatus()
         observeVerseUpdates()
+    }
+
+    private fun initializeBackNavigation() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                when {
+                    viewBinding.drawerLayout.isDrawerOpen(GravityCompat.START) ->
+                        viewBinding.drawerLayout.closeDrawer(GravityCompat.START)
+                    hideVerseDetail() -> Unit
+                    else -> {
+                        isEnabled = false
+                        onBackPressedDispatcher.onBackPressed()
+                        isEnabled = true
+                    }
+                }
+            }
+        })
     }
 
     private fun initializeUi() = with(viewBinding) {
@@ -436,19 +455,6 @@ class ReadingActivity : BaseActivity<ActivityReadingBinding, ReadingViewModel>()
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         drawerToggle.onConfigurationChanged(newConfig)
-    }
-
-    override fun onBackPressed() {
-        if (viewBinding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            viewBinding.drawerLayout.closeDrawer(GravityCompat.START)
-            return
-        }
-
-        if (hideVerseDetail()) {
-            return
-        }
-
-        super.onBackPressed()
     }
 
     override fun inflateViewBinding(): ActivityReadingBinding = ActivityReadingBinding.inflate(layoutInflater)

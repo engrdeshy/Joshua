@@ -23,6 +23,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.test.fail
 import me.xizzhu.android.joshua.R
 import me.xizzhu.android.joshua.core.Bible
@@ -73,5 +74,24 @@ class ChapterListViewTest : BaseUnitTest() {
         repeat(Bible.BOOK_COUNT) { index ->
             assertEquals(index == 0, chapterListView.isGroupExpanded(index))
         }
+    }
+
+    @Test
+    fun `current book waits for chapter items before expanding`() {
+        val chapterListView = ChapterListView(ApplicationProvider.getApplicationContext())
+        chapterListView.initialize { fail() }
+
+        // The current verse can be emitted before translated book names on startup.
+        chapterListView.setCurrentChapter(currentBookIndex = 0, currentChapterIndex = 0)
+        chapterListView.expandCurrentBook()
+        assertFalse(chapterListView.isGroupExpanded(0))
+
+        chapterListView.setChapterSelectionItems(
+            chapterSelectionItems = MockContents.kjvBookNames.mapIndexed { index, bookName ->
+                ChapterSelectionItem(bookIndex = index, bookName = bookName, chapterCount = Bible.getChapterCount(index))
+            }
+        )
+        chapterListView.expandCurrentBook()
+        assertTrue(chapterListView.isGroupExpanded(0))
     }
 }
