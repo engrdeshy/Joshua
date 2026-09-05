@@ -15,11 +15,10 @@
  */
 
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.application")
-    id("com.google.firebase.crashlytics")
-    id("com.google.gms.google-services")
     id(Dependencies.Hilt.plugin)
     kotlin("android")
     kotlin("kapt")
@@ -32,10 +31,6 @@ android {
         sourceCompatibility = Versions.java
         targetCompatibility = Versions.java
     }
-    kotlinOptions {
-        jvmTarget = Versions.Kotlin.jvmTarget
-    }
-
     buildToolsVersion = Versions.Sdk.buildTools
     compileSdk = Versions.Sdk.compile
 
@@ -50,10 +45,12 @@ android {
 
         multiDexEnabled = true
 
-        resourceConfigurations.addAll(Configurations.supportedLocales)
     }
 
+    androidResources.localeFilters.addAll(Configurations.supportedLocales)
+
     buildFeatures {
+        buildConfig = true
         viewBinding = true
     }
 
@@ -84,7 +81,9 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("release")
+            if (File("keystore.properties").exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         getByName("debug") {
@@ -99,10 +98,12 @@ android {
 
         unitTests.all { test ->
             test.maxParallelForks = Runtime.getRuntime().availableProcessors() / 2
+            // Robolectric 4.9.2 supports Android 13; production still compiles and targets API 36.
+            test.systemProperty("robolectric.enabledSdks", "33")
         }
     }
 
-    packagingOptions {
+    packaging {
         resources.excludes.addAll(listOf(
             "META-INF/atomicfu.kotlin_module", "META-INF/AL2.0", "META-INF/LGPL2.1", "META-INF/licenses/*",
 
@@ -112,15 +113,15 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+    }
+}
+
 // allow references to generated code
 kapt {
     correctErrorTypes = true
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = Versions.Kotlin.jvmTarget
-    }
 }
 
 dependencies {
@@ -142,10 +143,6 @@ dependencies {
     implementation(Dependencies.AndroidX.View.swipeRefreshLayout)
     implementation(Dependencies.AndroidX.View.viewPager2)
 
-    releaseImplementation(platform(Dependencies.Firebase.bom))
-    releaseImplementation(Dependencies.Firebase.analytics)
-    releaseImplementation(Dependencies.Firebase.Crashlytics.crashlytics)
-
     implementation(Dependencies.Hilt.android)
     kapt(Dependencies.Hilt.compiler)
 
@@ -163,10 +160,4 @@ dependencies {
     testImplementation(Dependencies.Hilt.test)
     testImplementation(Dependencies.mockk)
     testImplementation(Dependencies.robolectric)
-}
-
-kover {
-    instrumentation {
-        excludeTasks.add("testDebugUnitTest")
-    }
 }

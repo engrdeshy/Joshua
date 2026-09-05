@@ -31,7 +31,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> : AppCompatAct
     protected val tag: String = javaClass.simpleName
 
     @Inject
-    protected lateinit var navigator: Navigator
+    lateinit var navigator: Navigator
 
     protected lateinit var viewBinding: VB
 
@@ -42,6 +42,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel> : AppCompatAct
 
         viewBinding = inflateViewBinding()
         setContentView(viewBinding.root)
+        applySystemBarInsets(viewBinding.root)
 
         observeSettings()
     }

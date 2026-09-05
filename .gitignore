@@ -1,5 +1,6 @@
 # IntelliJ & Android Studio
 .gradle
+.kotlin
 .idea
 *.iml
 captures
@@ -9,6 +10,7 @@ local.properties
 build
 gen
 out
+.tools
 .externalNativeBuild
 
 # Mac

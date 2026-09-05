@@ -2,6 +2,12 @@ CHANGELOG
 ---------
 
 #### Next release
+- Rename the app to Bible Flourish.
+- Target Android 16 (API 36) while retaining Android 5.0+ compatibility.
+- Add an opt-in daily reminder for the chapter currently being read.
+- Add privacy protections: block cleartext traffic, disable OS/cloud backup, and remove Firebase analytics and crash reporting.
+- Keep Cross references immediately after Verses in the verse detail tabs.
+- Update Gradle to 8.13, Android Gradle Plugin to 8.13.2, Kotlin to 2.3.0, Java to 17, and Hilt to 2.58.
 - Update dependencies:
   - Gradle to 7.6
   - Android Gradle plugin to 7.3.1

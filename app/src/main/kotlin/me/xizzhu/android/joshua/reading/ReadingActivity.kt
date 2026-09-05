@@ -72,6 +72,7 @@ import me.xizzhu.android.logger.Log
 import kotlin.math.max
 import me.xizzhu.android.joshua.reading.chapter.ChapterSelectionFragment
 import me.xizzhu.android.joshua.reading.toolbar.ReadingToolbarFragment
+import me.xizzhu.android.joshua.reminders.ReadingReminderManager
 
 @AndroidEntryPoint
 class ReadingActivity : BaseActivity<ActivityReadingBinding, ReadingViewModel>(), SimpleVerseItem.Callback, VerseItem.Callback,
@@ -384,6 +385,9 @@ class ReadingActivity : BaseActivity<ActivityReadingBinding, ReadingViewModel>()
                 currentTranslation = currentReadingStatus.currentTranslation
                 currentVerseIndex = currentReadingStatus.currentVerseIndex
                 currentBookName = currentReadingStatus.bookNames[currentReadingStatus.currentVerseIndex.bookIndex]
+                ReadingReminderManager(applicationContext).rememberChapter(
+                    "$currentBookName ${currentReadingStatus.currentVerseIndex.chapterIndex + 1}"
+                )
             }.launchIn(lifecycleScope)
     }
 

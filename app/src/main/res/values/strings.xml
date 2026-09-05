@@ -7,7 +7,7 @@
     <string name="text_old_testament_abbr">OT</string>
     <string name="text_new_testament_abbr">NT</string>
 
-    <string name="app_name">@string/text_bible</string>
+    <string name="app_name">Bible Flourish</string>
 
     <string name="title_bookmarks">Bookmarks</string>
     <string name="title_highlights">Highlights</string>
@@ -115,6 +115,12 @@
     <string name="settings_title_hide_search_button">Hide search button</string>
     <string name="settings_title_consolidated_sharing">Consolidate verses when sharing</string>
     <string name="settings_title_default_highlight_color">Default highlight color</string>
+    <string name="settings_header_reminders">Reminders</string>
+    <string name="settings_title_reading_reminder">Daily chapter reminder</string>
+    <string name="settings_title_reminder_time">Reminder time</string>
+    <string name="settings_header_privacy">Privacy</string>
+    <string name="settings_title_privacy">Private by design</string>
+    <string name="settings_description_privacy">Reading history, notes, highlights, bookmarks, and reminder choices stay on this device. Bible Flourish contains no analytics or advertising trackers.</string>
     <string name="settings_header_backup_restore">Backup &amp; restore</string>
     <string name="settings_title_backup">Backup all my data</string>
     <string name="settings_title_restore">Restore</string>
@@ -122,6 +128,13 @@
     <string name="settings_title_rate">Rate me on Google Play</string>
     <string name="settings_title_website">Visit website</string>
     <string name="settings_title_version">Version</string>
+
+    <string name="reminder_channel_name">Reading reminders</string>
+    <string name="reminder_channel_description">Daily reminders to continue your current Bible chapter</string>
+    <string name="reminder_title">Time to flourish</string>
+    <string name="reminder_message_current_chapter">Continue reading your current chapter.</string>
+    <string name="reminder_message_chapter">Continue reading %1$s.</string>
+    <string name="reminder_permission_denied">Notifications are off, so the reminder was not enabled.</string>
 
     <string name="settings_title_pick_night_mode">Select night mode</string>
     <string name="settings_text_night_mode_on">On</string>

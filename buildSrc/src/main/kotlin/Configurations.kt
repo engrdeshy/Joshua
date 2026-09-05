@@ -25,7 +25,7 @@ object Configurations {
 
 object Versions {
     object App {
-        const val code = 2102
+        const val code = 2200
         val name: String by lazy {
             "${code / 10000}.${(code % 10000) / 100}.${code % 100} " +
                 "(${LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))})"
@@ -33,20 +33,19 @@ object Versions {
     }
 
     object Sdk {
-        const val classpath = "7.3.1"
-        const val buildTools = "33.0.1"
-        const val compile = 33
-        const val min = 19
-        const val target = 33
+        const val classpath = "8.13.2"
+        const val buildTools = "35.0.0"
+        const val compile = 36
+        const val min = 21
+        const val target = 36
     }
 
-    val java = JavaVersion.VERSION_11
+    val java = JavaVersion.VERSION_17
 
     object Kotlin {
         val jvmTarget = java.toString()
-        const val core = "1.8.0"
+        const val core = "2.2.21"
         const val coroutines = "1.6.4"
-        const val kover = "0.6.1"
     }
 
     object AndroidX {
@@ -72,17 +71,8 @@ object Versions {
         }
     }
 
-    object Firebase {
-        const val classpath = "4.3.10"
-        const val bom = "31.1.1"
-
-        object Crashlytics {
-            const val classpath = "2.9.2"
-        }
-    }
-
     const val ask = "0.5.2"
-    const val hilt = "2.44.2"
+    const val hilt = "2.58"
     const val logger = "0.7.0"
     const val materialComponent = "1.7.0"
 
@@ -103,9 +93,6 @@ object Dependencies {
         const val test = "org.jetbrains.kotlin:kotlin-test-junit:${Versions.Kotlin.core}"
         const val coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.Kotlin.coroutines}"
 
-        object Kover {
-            const val plugin = "org.jetbrains.kotlinx.kover"
-        }
     }
 
     object AndroidX {
@@ -137,17 +124,6 @@ object Dependencies {
 
         object Test {
             const val core = "androidx.test:core:${Versions.AndroidX.Test.core}"
-        }
-    }
-
-    object Firebase {
-        const val classpath = "com.google.gms:google-services:${Versions.Firebase.classpath}"
-        const val bom = "com.google.firebase:firebase-bom:${Versions.Firebase.bom}"
-        const val analytics = "com.google.firebase:firebase-analytics"
-
-        object Crashlytics {
-            const val classpath = "com.google.firebase:firebase-crashlytics-gradle:${Versions.Firebase.Crashlytics.classpath}"
-            const val crashlytics = "com.google.firebase:firebase-crashlytics"
         }
     }
 

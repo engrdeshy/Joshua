@@ -35,7 +35,7 @@ abstract class BaseFragment<VB : ViewBinding, ViewAction, ViewState, VM : BaseVi
     protected val loggingTag: String = javaClass.simpleName
 
     @Inject
-    protected lateinit var navigator: Navigator
+    lateinit var navigator: Navigator
 
     protected abstract val viewModel: VM
 

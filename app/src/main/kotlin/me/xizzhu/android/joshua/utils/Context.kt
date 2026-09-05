@@ -33,7 +33,7 @@ val Context.appVersionName: String
         application.packageManager.getPackageInfo(application.packageName, 0).versionName
     } else {
         application.packageManager.getPackageInfo(application.packageName, PackageManager.PackageInfoFlags.of(0)).versionName
-    }
+    }.orEmpty()
 
 // On older devices, this only works on the threads with loopers.
 fun Context.copyToClipBoard(label: CharSequence, text: CharSequence) {

@@ -31,7 +31,7 @@ abstract class BaseActivityV2<VB : ViewBinding, ViewAction, ViewState, VM : Base
     protected val tag: String = javaClass.simpleName
 
     @Inject
-    protected lateinit var navigator: Navigator
+    lateinit var navigator: Navigator
 
     protected abstract val viewModel: VM
 
@@ -49,6 +49,7 @@ abstract class BaseActivityV2<VB : ViewBinding, ViewAction, ViewState, VM : Base
         Log.i(tag, "onCreate()")
 
         setContentView(viewBinding.root)
+        applySystemBarInsets(viewBinding.root)
         initializeView()
 
         viewModel.viewAction().onEach(::onViewActionEmitted).launchIn(lifecycleScope)

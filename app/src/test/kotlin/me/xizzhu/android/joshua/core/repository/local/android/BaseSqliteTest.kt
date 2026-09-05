@@ -27,7 +27,7 @@ import org.robolectric.annotation.SQLiteMode
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
-@SQLiteMode(SQLiteMode.Mode.NATIVE)
+@SQLiteMode(SQLiteMode.Mode.LEGACY)
 abstract class BaseSqliteTest : BaseUnitTest() {
     protected lateinit var androidDatabase: AndroidDatabase
 

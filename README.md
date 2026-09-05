@@ -1,15 +1,18 @@
-[![Build Status](https://img.shields.io/github/actions/workflow/status/xizzhu/Joshua/android.yml?branch=master&color=blue)](https://github.com/xizzhu/Joshua/actions)
-[![Code Coverage](https://img.shields.io/codecov/c/github/xizzhu/Joshua/master?color=blue)](https://app.codecov.io/gh/xizzhu/Joshua)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/engrdeshy/Joshua/android.yml?branch=master&color=blue)](https://github.com/engrdeshy/Joshua/actions)
 ![Languages](https://img.shields.io/badge/languages-Kotlin-blue.svg?longCache=true&style=flat)
-[![API](https://img.shields.io/badge/API-19%2B-blue.svg?style=flat)](https://www.android.com/versions/kit-kat-4-4/)
+[![API](https://img.shields.io/badge/API-21%2B-blue.svg?style=flat)](https://www.android.com/versions/lollipop-5-0/)
 [![Apache License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
 
-Joshua
-======
+Bible Flourish
+==============
+
+Bible Flourish is a privacy-first continuation of Joshua for Android 5.0 and newer. It keeps the original package ID for upgrade compatibility while adding Android 16 support, verse cross-references, and opt-in daily reminders for the chapter you are reading.
+
+See the [privacy overview](docs/PRIVACY.md) for how local reading data and optional notifications are handled.
 
 A simple and easy-to-use Bible reader for your Android device, with minimalist design. It supports offline reading, multi-versions, full-text search, and many other features, while maintaining a small download and install size.
 
-You can download the APK from [Play Store](https://play.google.com/store/apps/details?id=me.xizzhu.android.joshua) or [here](https://github.com/xizzhu/Joshua/releases). Recent changes are listed [here](docs/CHANGELOG.md). Feel free to request new features or report bugs [here](https://github.com/xizzhu/Joshua/issues).
+Download Bible Flourish from the [GitHub releases page](https://github.com/engrdeshy/Joshua/releases). Recent changes are listed [here](docs/CHANGELOG.md). Feel free to request new features or report bugs [here](https://github.com/engrdeshy/Joshua/issues).
 
 Main Features
 -------------

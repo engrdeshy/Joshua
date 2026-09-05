@@ -17,13 +17,5 @@
 package me.xizzhu.android.joshua
 
 import android.app.Application
-import me.xizzhu.android.logger.CrashlyticsLogger
-import me.xizzhu.android.logger.Log
-
 abstract class BaseApp : Application() {
-    override fun onCreate() {
-        super.onCreate()
-
-        Log.addLogger(CrashlyticsLogger())
-    }
 }

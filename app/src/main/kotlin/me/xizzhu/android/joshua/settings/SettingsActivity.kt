@@ -16,12 +16,17 @@
 
 package me.xizzhu.android.joshua.settings
 
+import android.Manifest
+import android.app.TimePickerDialog
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.TypedValue
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.Px
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
 import me.xizzhu.android.joshua.Navigator
@@ -29,6 +34,7 @@ import me.xizzhu.android.joshua.R
 import me.xizzhu.android.joshua.databinding.ActivitySettingsBinding
 import me.xizzhu.android.joshua.ui.toast
 import me.xizzhu.android.joshua.infra.BaseActivityV2
+import me.xizzhu.android.joshua.reminders.ReadingReminderManager
 import me.xizzhu.android.joshua.ui.indeterminateProgressDialog
 import me.xizzhu.android.joshua.ui.listDialog
 import me.xizzhu.android.joshua.ui.seekBarDialog
@@ -38,6 +44,17 @@ import me.xizzhu.android.logger.Log
 
 @AndroidEntryPoint
 class SettingsActivity : BaseActivityV2<ActivitySettingsBinding, SettingsViewModel.ViewAction, SettingsViewModel.ViewState, SettingsViewModel>() {
+    private val readingReminderManager: ReadingReminderManager by lazy(LazyThreadSafetyMode.NONE) {
+        ReadingReminderManager(applicationContext)
+    }
+    private val notificationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) {
+            readingReminderManager.setEnabled(true)
+        } else {
+            toast(R.string.reminder_permission_denied)
+        }
+        updateReminderControls()
+    }
     private val createFileForBackupLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) viewModel.backup(result.data?.data)
     }
@@ -63,6 +80,12 @@ class SettingsActivity : BaseActivityV2<ActivitySettingsBinding, SettingsViewMod
         restore.setOnSingleClickListener(viewModel::restore)
         rate.setOnSingleClickListener(viewModel::openRateMe)
         website.setOnSingleClickListener(viewModel::openWebsite)
+        readingReminder.setOnCheckedChangeByUserListener { enabled ->
+            if (enabled) requestEnableReminder() else readingReminderManager.setEnabled(false)
+            updateReminderControls()
+        }
+        reminderTime.setOnSingleClickListener(::selectReminderTime)
+        updateReminderControls()
     }
 
     override fun onViewActionEmitted(viewAction: SettingsViewModel.ViewAction) = when (viewAction) {
@@ -119,6 +142,11 @@ class SettingsActivity : BaseActivityV2<ActivitySettingsBinding, SettingsViewMod
         hideSearchButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, bodyTextSizePx.toFloat())
         consolidatedSharing.setTextSize(TypedValue.COMPLEX_UNIT_PX, bodyTextSizePx.toFloat())
         defaultHighlightColor.setTextSize(bodyTextSizePx, captionTextSizePx)
+        reminders.setTextSize(bodyTextSizePx)
+        readingReminder.setTextSize(TypedValue.COMPLEX_UNIT_PX, bodyTextSizePx.toFloat())
+        reminderTime.setTextSize(bodyTextSizePx, captionTextSizePx)
+        privacy.setTextSize(bodyTextSizePx)
+        privacySummary.setTextSize(bodyTextSizePx, captionTextSizePx)
         backupRestore.setTextSize(bodyTextSizePx)
         backup.setTextSize(bodyTextSizePx, captionTextSizePx)
         restore.setTextSize(bodyTextSizePx, captionTextSizePx)
@@ -126,6 +154,34 @@ class SettingsActivity : BaseActivityV2<ActivitySettingsBinding, SettingsViewMod
         rate.setTextSize(bodyTextSizePx, captionTextSizePx)
         website.setTextSize(bodyTextSizePx, captionTextSizePx)
         version.setTextSize(bodyTextSizePx, captionTextSizePx)
+    }
+
+    private fun requestEnableReminder() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            readingReminderManager.setEnabled(true)
+        }
+    }
+
+    private fun selectReminderTime() {
+        TimePickerDialog(
+            this,
+            { _, hour, minute ->
+                readingReminderManager.setTime(hour, minute)
+                requestEnableReminder()
+                updateReminderControls()
+            },
+            readingReminderManager.hour,
+            readingReminderManager.minute,
+            android.text.format.DateFormat.is24HourFormat(this)
+        ).show()
+    }
+
+    private fun updateReminderControls() = with(viewBinding) {
+        readingReminder.isChecked = readingReminderManager.isEnabled
+        reminderTime.setDescription(readingReminderManager.formattedTime())
     }
 
     private fun SettingsViewModel.ViewState.BackupRestoreState.handle(isBackup: Boolean) {
