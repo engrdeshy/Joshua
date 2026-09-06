@@ -18,6 +18,7 @@ package me.xizzhu.android.joshua.progress
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -37,6 +38,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.test.fail
+import kotlin.math.roundToInt
 
 @RunWith(RobolectricTestRunner::class)
 class ReadingProgressViewHolderTest : BaseUnitTest() {
@@ -263,5 +265,39 @@ class ReadingProgressViewHolderTest : BaseUnitTest() {
                 }
             }
         }
+    }
+
+    @Test
+    fun `book progress content stays inside a narrow screen`() {
+        val viewHolder = ReadingProgressViewHolder.Book(
+            inflater = LayoutInflater.from(context),
+            parent = FrameLayout(context)
+        ) {}
+        viewHolder.bindData(
+            item = ReadingProgressItem.Book(
+                settings = Settings.DEFAULT,
+                bookName = "A long translated book name",
+                bookIndex = 0,
+                chaptersRead = List(Bible.getChapterCount(0)) { false },
+                chaptersReadCount = 0,
+                expanded = true,
+            )
+        )
+
+        val narrowWidth = (240 * context.resources.displayMetrics.density).roundToInt()
+        viewHolder.itemView.measure(
+            View.MeasureSpec.makeMeasureSpec(narrowWidth, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+        )
+        viewHolder.itemView.layout(0, 0, viewHolder.itemView.measuredWidth, viewHolder.itemView.measuredHeight)
+
+        val bookName = viewHolder.itemView.findViewById<TextView>(R.id.book_name)
+        val progress = viewHolder.itemView.findViewById<ReadingProgressBar>(R.id.reading_progress_bar)
+        val chapters = viewHolder.itemView.findViewById<LinearLayout>(R.id.chapters)
+        assertTrue(bookName.right <= narrowWidth)
+        assertTrue(progress.right <= narrowWidth)
+        assertTrue(chapters.right <= narrowWidth)
+        assertTrue(progress.top >= bookName.bottom)
+        assertTrue(chapters.top >= progress.bottom)
     }
 }

@@ -20,8 +20,9 @@ import android.content.Context
 import android.os.Build
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
-import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.annotation.Px
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
@@ -30,7 +31,7 @@ import me.xizzhu.android.joshua.databinding.InnerSettingButtonBinding
 import me.xizzhu.android.joshua.ui.setBackground
 import me.xizzhu.android.joshua.ui.setText
 
-class SettingButton : FrameLayout {
+class SettingButton : LinearLayout {
     private val viewBinding: InnerSettingButtonBinding = InnerSettingButtonBinding.inflate(LayoutInflater.from(context), this)
 
     constructor(context: Context) : super(context) {
@@ -51,6 +52,10 @@ class SettingButton : FrameLayout {
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
+        orientation = VERTICAL
+        gravity = Gravity.CENTER_VERTICAL
+        val verticalPadding = context.resources.getDimensionPixelSize(R.dimen.padding_small)
+        setPadding(0, verticalPadding, 0, verticalPadding)
         setBackground(android.R.attr.selectableItemBackground)
         minimumHeight = context.resources.getDimensionPixelSize(R.dimen.item_height)
 

@@ -15,28 +15,35 @@
 
     <me.xizzhu.android.joshua.progress.ReadingProgressBar
         android:id="@+id/reading_progress_bar"
-        android:layout_width="240dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding"
         android:layout_marginTop="@dimen/padding_small"
         android:layout_marginEnd="@dimen/padding"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/book_name" />
 
     <LinearLayout
         android:id="@+id/chapters"
-        android:layout_width="240dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding"
+        android:layout_marginEnd="@dimen/padding"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="@id/reading_progress_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/reading_progress_bar" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/book_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/padding"
-        app:layout_constraintBottom_toBottomOf="@id/reading_progress_bar"
+        android:layout_marginTop="@dimen/padding_small"
+        android:layout_marginEnd="@dimen/padding"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/reading_progress_bar"
+        app:layout_constraintTop_toBottomOf="@id/divider"
         tools:text="Genesis" />
 </androidx.constraintlayout.widget.ConstraintLayout>

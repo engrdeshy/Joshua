@@ -17,6 +17,7 @@
 package me.xizzhu.android.joshua.settings.widgets
 
 import android.content.Context
+import android.view.View
 import android.widget.TextView
 import androidx.test.core.app.ApplicationProvider
 import kotlin.test.BeforeTest
@@ -80,5 +81,22 @@ class SettingButtonTest : BaseUnitTest() {
         button.setDescription(R.string.title_settings)
         assertEquals("title", button.findViewById<TextView>(R.id.title).text.toString())
         assertEquals("Settings", button.findViewById<TextView>(R.id.description).text.toString())
+    }
+
+    @Test
+    fun `title and long description wrap without overlapping on a narrow screen`() {
+        val attrs = Robolectric.buildAttributeSet()
+            .addAttribute(R.attr.settingButtonTitle, "Private by design")
+            .addAttribute(R.attr.settingButtonDescription, "Reading history, notes, highlights, bookmarks, and reminder choices stay on this device.")
+            .build()
+        val button = SettingButton(context, attrs)
+        val width = View.MeasureSpec.makeMeasureSpec(240, View.MeasureSpec.EXACTLY)
+        button.measure(width, View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+        button.layout(0, 0, button.measuredWidth, button.measuredHeight)
+
+        val title = button.findViewById<TextView>(R.id.title)
+        val description = button.findViewById<TextView>(R.id.description)
+        assertTrue(description.top >= title.bottom)
+        assertTrue(description.right <= button.width)
     }
 }
