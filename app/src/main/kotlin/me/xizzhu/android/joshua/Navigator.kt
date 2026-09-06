@@ -66,7 +66,7 @@ class Navigator {
             SCREEN_SETTINGS -> Intent(activity, SettingsActivity::class.java)
             SCREEN_STRONG_NUMBER -> Intent(activity, StrongNumberActivity::class.java)
             SCREEN_RATE_ME -> Intent(Intent.ACTION_VIEW).setData(Uri.parse("market://details?id=me.xizzhu.android.joshua"))
-            SCREEN_WEBSITE -> Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://xizzhu.me/pages/about-joshua/"))
+            SCREEN_WEBSITE -> Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://github.com/engrdeshy/Joshua"))
             else -> throw IllegalArgumentException("Unknown screen - $screen")
         }
         extras?.let { intent.putExtras(it) }

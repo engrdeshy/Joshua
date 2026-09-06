@@ -12,19 +12,31 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.children
+import androidx.drawerlayout.widget.DrawerLayout
 
 internal fun AppCompatActivity.applySystemBarInsets(root: View) {
     WindowCompat.setDecorFitsSystemWindows(window, false)
-    val left = root.paddingLeft
-    val top = root.paddingTop
-    val right = root.paddingRight
-    val bottom = root.paddingBottom
-    ViewCompat.setOnApplyWindowInsetsListener(root) { view, windowInsets ->
+    val insetTargets = if (root is DrawerLayout) root.children.toList() else listOf(root)
+    val initialPadding = insetTargets.associateWith { view ->
+        Padding(view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom)
+    }
+    ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
         val insets = windowInsets.getInsets(
             WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
         )
-        view.setPadding(left + insets.left, top + insets.top, right + insets.right, bottom + insets.bottom)
+        insetTargets.forEach { target ->
+            val padding = checkNotNull(initialPadding[target])
+            target.setPadding(
+                padding.left + insets.left,
+                padding.top + insets.top,
+                padding.right + insets.right,
+                padding.bottom + insets.bottom,
+            )
+        }
         windowInsets
     }
     ViewCompat.requestApplyInsets(root)
 }
+
+private data class Padding(val left: Int, val top: Int, val right: Int, val bottom: Int)
