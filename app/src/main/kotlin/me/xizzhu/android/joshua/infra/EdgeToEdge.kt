@@ -23,7 +23,7 @@ internal fun AppCompatActivity.applySystemBarInsets(root: View) {
     }
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
         val insets = windowInsets.getInsets(
-            WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout() or WindowInsetsCompat.Type.ime()
         )
         insetTargets.forEach { target ->
             val padding = checkNotNull(initialPadding[target])

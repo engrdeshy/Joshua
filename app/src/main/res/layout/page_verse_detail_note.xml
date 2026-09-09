@@ -8,7 +8,9 @@
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/note"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="top|start"
+        android:scrollbars="vertical"
         android:imeOptions="actionDone"
         android:inputType="textMultiLine" />
 </com.google.android.material.textfield.TextInputLayout>

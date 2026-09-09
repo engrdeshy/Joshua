@@ -93,13 +93,13 @@ class SettingsRepositoryTest : BaseUnitTest() {
     }
 
     @Test
-    fun `test saveSettings() for night mode on`() = runTest {
-        saveUpdatedSettingsAndVerifySaveSettingsIsCalled(Settings.DEFAULT.copy(nightMode = Settings.NIGHT_MODE_ON))
+    fun `test saveSettings() for night mode off`() = runTest {
+        saveUpdatedSettingsAndVerifySaveSettingsIsCalled(Settings.DEFAULT.copy(nightMode = Settings.NIGHT_MODE_OFF))
     }
 
     @Test
-    fun `test saveSettings() for for simple reading mode on`() = runTest {
-        saveUpdatedSettingsAndVerifySaveSettingsIsCalled(Settings.DEFAULT.copy(simpleReadingModeOn = true))
+    fun `test saveSettings() for simple reading mode off`() = runTest {
+        saveUpdatedSettingsAndVerifySaveSettingsIsCalled(Settings.DEFAULT.copy(simpleReadingModeOn = false))
     }
 
     @Test

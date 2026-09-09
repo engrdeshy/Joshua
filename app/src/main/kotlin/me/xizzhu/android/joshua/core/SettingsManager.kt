@@ -43,9 +43,9 @@ data class Settings(
 
         val DEFAULT = Settings(
             keepScreenOn = true,
-            nightMode = NIGHT_MODE_OFF,
+            nightMode = NIGHT_MODE_ON,
             fontSizeScale = 1.0F,
-            simpleReadingModeOn = false,
+            simpleReadingModeOn = true,
             hideSearchButton = false,
             consolidateVersesForSharing = false,
             defaultHighlightColor = Highlight.COLOR_NONE,

@@ -21,6 +21,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import me.xizzhu.android.joshua.R
@@ -102,7 +104,13 @@ class ReadingToolbarViewModel @Inject constructor(
     fun removeParallelTranslation(translationToRemove: String) {
         viewModelScope.launch {
             runCatching {
-                bibleReadingManager.removeParallelTranslation(translationToRemove)
+                if (bibleReadingManager.currentTranslation().firstOrNull() == translationToRemove) {
+                    val replacement = bibleReadingManager.parallelTranslations().first()
+                        .firstOrNull { it != translationToRemove }
+                    if (replacement != null) bibleReadingManager.saveCurrentTranslation(replacement)
+                } else {
+                    bibleReadingManager.removeParallelTranslation(translationToRemove)
+                }
             }.onFailure { e ->
                 Log.e(tag, "Failed to remove parallel translation [$translationToRemove]", e)
                 updateViewState { it.copy(error = ViewState.Error.ParallelTranslationRemovalError(translationToRemove)) }

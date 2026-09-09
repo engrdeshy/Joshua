@@ -26,7 +26,6 @@ import androidx.core.view.isVisible
 import me.xizzhu.android.joshua.R
 import me.xizzhu.android.joshua.databinding.SpinnerDropDownBinding
 import me.xizzhu.android.joshua.databinding.SpinnerSelectedBinding
-import me.xizzhu.android.joshua.ui.setOnCheckedChangeByUserListener
 
 class TranslationSpinnerAdapter(
     context: Context,
@@ -69,7 +68,8 @@ class TranslationSpinnerAdapter(
         }
 
         val binding = SpinnerDropDownBinding.inflate(inflater, parent, false)
-        binding.checkbox.setOnCheckedChangeByUserListener { isChecked ->
+        binding.checkbox.setOnClickListener {
+            val isChecked = binding.checkbox.isChecked
             when (val item = binding.root.tag as TranslationItem) {
                 is TranslationItem.Translation -> {
                     if (isChecked) {
@@ -91,7 +91,9 @@ class TranslationSpinnerAdapter(
 
         title.text = item.translationShortName
         checkbox.isVisible = true
-        checkbox.isEnabled = !item.isCurrentTranslation
+        checkbox.isEnabled = !item.isCurrentTranslation || items.any {
+            it is TranslationItem.Translation && !it.isCurrentTranslation && it.isParallelTranslation
+        }
         checkbox.isChecked = item.isCurrentTranslation or item.isParallelTranslation
     }
 

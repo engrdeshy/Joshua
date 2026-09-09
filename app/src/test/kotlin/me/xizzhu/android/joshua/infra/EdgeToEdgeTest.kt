@@ -50,6 +50,15 @@ class EdgeToEdgeTest {
         assertEquals(listOf(11, 22, 33, 44), content.paddingValues())
         assertEquals(listOf(15, 26, 37, 48), menu.paddingValues())
         assertEquals(listOf(0, 0, 0, 0), drawer.paddingValues())
+        val keyboardInsets = WindowInsetsCompat.Builder()
+            .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.of(10, 20, 30, 40))
+            .setInsets(WindowInsetsCompat.Type.ime(), Insets.of(0, 0, 0, 300))
+            .build()
+        repeat(2) { ViewCompat.dispatchApplyWindowInsets(drawer, keyboardInsets) }
+        assertEquals(listOf(11, 22, 33, 304), content.paddingValues())
+        ViewCompat.dispatchApplyWindowInsets(drawer, WindowInsetsCompat.Builder()
+            .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.of(10, 20, 30, 40)).build())
+        assertEquals(listOf(11, 22, 33, 44), content.paddingValues())
     }
 
     @Test

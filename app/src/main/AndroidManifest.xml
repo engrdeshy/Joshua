@@ -32,7 +32,7 @@
         <activity android:name="me.xizzhu.android.joshua.annotated.highlights.HighlightsActivity" />
         <activity android:name="me.xizzhu.android.joshua.annotated.notes.NotesActivity" />
         <activity android:name=".progress.ReadingProgressActivity" />
-        <activity android:name=".reading.ReadingActivity" />
+        <activity android:name=".reading.ReadingActivity" android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".search.SearchActivity"
             android:exported="false"

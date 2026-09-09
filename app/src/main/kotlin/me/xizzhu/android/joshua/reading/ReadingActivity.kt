@@ -166,6 +166,9 @@ class ReadingActivity : BaseActivity<ActivityReadingBinding, ReadingViewModel>()
 
     private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var versePagerAdapter: VersePagerAdapter
+    private val verseLoadJobs = mutableMapOf<Pair<Int, Int>, Job>()
+    private var translationGeneration = 0
+    private var loadedTranslationSelection: Pair<String, List<String>>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -263,8 +266,13 @@ class ReadingActivity : BaseActivity<ActivityReadingBinding, ReadingViewModel>()
     }
 
     private fun loadVerses(bookIndex: Int, chapterIndex: Int) {
-        readingViewModel.loadVerses(bookIndex, chapterIndex)
-            .onSuccess { verses -> versePagerAdapter.setVerses(bookIndex, chapterIndex, verses.items) }
+        val key = bookIndex to chapterIndex
+        verseLoadJobs.remove(key)?.cancel()
+        val generation = translationGeneration
+        verseLoadJobs[key] = readingViewModel.loadVerses(bookIndex, chapterIndex)
+            .onSuccess { verses ->
+                if (generation == translationGeneration) versePagerAdapter.setVerses(bookIndex, chapterIndex, verses.items)
+            }
             .onFailure { e ->
                 Log.e(tag, "Failed to load verses", e)
                 dialog(true, R.string.dialog_title_error, R.string.dialog_message_failed_to_load_verses, { _, _ -> loadVerses(bookIndex, chapterIndex) })
@@ -382,6 +390,13 @@ class ReadingActivity : BaseActivity<ActivityReadingBinding, ReadingViewModel>()
     private fun observeCurrentReadingStatus() {
         readingViewModel.currentReadingStatus()
             .onSuccess { currentReadingStatus ->
+                val selection = currentReadingStatus.currentTranslation to currentReadingStatus.parallelTranslations
+                if (selection != loadedTranslationSelection) {
+                    loadedTranslationSelection = selection
+                    translationGeneration++
+                    verseLoadJobs.values.forEach { it.cancel() }
+                    verseLoadJobs.clear()
+                }
                 with(viewBinding) {
                     drawerLayout.closeDrawer(GravityCompat.START)
 

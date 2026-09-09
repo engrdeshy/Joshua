@@ -22,6 +22,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import me.xizzhu.android.joshua.core.Verse
 import me.xizzhu.android.joshua.core.VerseIndex
 import me.xizzhu.android.joshua.core.VerseSearchQuery
@@ -34,6 +36,7 @@ class BibleReadingRepository(private val localReadingStorage: LocalReadingStorag
     }
 
     private val cache: BibleReadingCache = BibleReadingCache()
+    private val selectionMutex = Mutex()
 
     private val _currentVerseIndex = MutableStateFlow<VerseIndex?>(null)
     val currentVerseIndex: Flow<VerseIndex> = _currentVerseIndex.filterNotNull()
@@ -72,20 +75,23 @@ class BibleReadingRepository(private val localReadingStorage: LocalReadingStorag
         localReadingStorage.saveCurrentVerseIndex(verseIndex)
     }
 
-    suspend fun saveCurrentTranslation(translationShortName: String) {
-        _currentTranslation.value = translationShortName
+    suspend fun saveCurrentTranslation(translationShortName: String) = selectionMutex.withLock {
+        val parallel = _parallelTranslations.value.orEmpty().filter { it != translationShortName }.distinct()
+        if (parallel != _parallelTranslations.value.orEmpty()) persistParallelTranslations(parallel)
         localReadingStorage.saveCurrentTranslation(translationShortName)
+        _currentTranslation.value = translationShortName
     }
 
-    suspend fun requestParallelTranslation(translationShortName: String) {
+    suspend fun requestParallelTranslation(translationShortName: String) = selectionMutex.withLock {
+        if (translationShortName == _currentTranslation.value) return@withLock
         (_parallelTranslations.value?.toMutableSet() ?: mutableSetOf()).run {
-            if (add(translationShortName)) saveParallelTranslations(toList())
+            if (add(translationShortName)) persistParallelTranslations(toList())
         }
     }
 
-    suspend fun removeParallelTranslation(translationShortName: String) {
+    suspend fun removeParallelTranslation(translationShortName: String) = selectionMutex.withLock {
         (_parallelTranslations.value?.toMutableSet() ?: mutableSetOf()).run {
-            if (remove(translationShortName)) saveParallelTranslations(toList())
+            if (remove(translationShortName)) persistParallelTranslations(toList())
         }
     }
 
@@ -93,9 +99,13 @@ class BibleReadingRepository(private val localReadingStorage: LocalReadingStorag
         saveParallelTranslations(emptyList())
     }
 
-    suspend fun saveParallelTranslations(parallelTranslations: List<String>) {
-        _parallelTranslations.value = parallelTranslations
+    suspend fun saveParallelTranslations(parallelTranslations: List<String>) = selectionMutex.withLock {
+        persistParallelTranslations(parallelTranslations.filter { it != _currentTranslation.value }.distinct())
+    }
+
+    private suspend fun persistParallelTranslations(parallelTranslations: List<String>) {
         localReadingStorage.saveParallelTranslations(parallelTranslations)
+        _parallelTranslations.value = parallelTranslations
     }
 
     suspend fun readBookNames(translationShortName: String): List<String> {

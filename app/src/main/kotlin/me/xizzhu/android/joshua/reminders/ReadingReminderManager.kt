@@ -25,17 +25,19 @@ import java.util.TimeZone
 import me.xizzhu.android.joshua.R
 import me.xizzhu.android.joshua.reading.ReadingActivity
 
-class ReadingReminderManager(private val context: Context) {
+class ReadingReminderManager(private val context: Context, val slot: Int = 0) {
+    init { require(slot in 0..2) }
     private val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+    private fun key(name: String): String = if (slot == 0) name else "${name}_$slot"
 
     val isEnabled: Boolean
-        get() = preferences.getBoolean(KEY_ENABLED, false)
+        get() = preferences.getBoolean(key(KEY_ENABLED), false)
 
     val hour: Int
-        get() = preferences.getInt(KEY_HOUR, DEFAULT_HOUR)
+        get() = preferences.getInt(key(KEY_HOUR), listOf(DEFAULT_HOUR, 7, 13)[slot])
 
     val minute: Int
-        get() = preferences.getInt(KEY_MINUTE, DEFAULT_MINUTE)
+        get() = preferences.getInt(key(KEY_MINUTE), DEFAULT_MINUTE)
 
     fun formattedTime(): String = android.text.format.DateFormat.getTimeFormat(context).format(
         Calendar.getInstance().apply {
@@ -45,12 +47,13 @@ class ReadingReminderManager(private val context: Context) {
     )
 
     fun setEnabled(enabled: Boolean) {
-        preferences.edit().putBoolean(KEY_ENABLED, enabled).apply()
+        preferences.edit().putBoolean(key(KEY_ENABLED), enabled).apply()
         if (enabled) schedule() else cancel()
     }
 
     fun setTime(hour: Int, minute: Int) {
-        preferences.edit().putInt(KEY_HOUR, hour).putInt(KEY_MINUTE, minute).apply()
+        require(hour in 0..23 && minute in 0..59)
+        preferences.edit().putInt(key(KEY_HOUR), hour).putInt(key(KEY_MINUTE), minute).apply()
         if (isEnabled) schedule()
     }
 
@@ -81,8 +84,8 @@ class ReadingReminderManager(private val context: Context) {
 
     private fun reminderPendingIntent(): PendingIntent = PendingIntent.getBroadcast(
         context,
-        REMINDER_REQUEST_CODE,
-        Intent(context, ReadingReminderReceiver::class.java).setAction(ACTION_SHOW_REMINDER),
+        REMINDER_REQUEST_CODE + slot,
+        Intent(context, ReadingReminderReceiver::class.java).setAction(ACTION_SHOW_REMINDER).putExtra(EXTRA_SLOT, slot),
         PendingIntent.FLAG_UPDATE_CURRENT or immutableFlag()
     )
 
@@ -99,6 +102,7 @@ class ReadingReminderManager(private val context: Context) {
         private const val REMINDER_WINDOW_MILLIS = 30 * 60 * 1000L
         private const val CHANNEL_ID = "reading_reminders"
         internal const val ACTION_SHOW_REMINDER = "me.xizzhu.android.joshua.SHOW_READING_REMINDER"
+        internal const val EXTRA_SLOT = "reminder_slot"
 
         internal fun nextTriggerMillis(
             nowMillis: Long,
@@ -161,12 +165,14 @@ class ReadingReminderManager(private val context: Context) {
 
 class ReadingReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        val manager = ReadingReminderManager(context.applicationContext)
         if (intent.action == ReadingReminderManager.ACTION_SHOW_REMINDER) {
+            val slot = intent.getIntExtra(ReadingReminderManager.EXTRA_SLOT, 0)
+            if (slot !in 0..2) return
+            val manager = ReadingReminderManager(context.applicationContext, slot)
             if (manager.isEnabled) ReadingReminderManager.showNotification(context)
             manager.rescheduleIfEnabled()
         } else {
-            manager.rescheduleIfEnabled()
+            (0..2).forEach { ReadingReminderManager(context.applicationContext, it).rescheduleIfEnabled() }
         }
     }
 }

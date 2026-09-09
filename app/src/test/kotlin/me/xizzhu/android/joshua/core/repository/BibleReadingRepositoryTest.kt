@@ -127,7 +127,7 @@ class BibleReadingRepositoryTest : BaseUnitTest() {
     @Test
     fun `test requestParallelTranslation() and removeParallelTranslation()`() = runTest {
         coEvery { localReadingStorage.readCurrentVerseIndex() } returns VerseIndex(1, 2, 3)
-        coEvery { localReadingStorage.readCurrentTranslation() } returns MockContents.kjvShortName
+        coEvery { localReadingStorage.readCurrentTranslation() } returns "NLT"
         coEvery { localReadingStorage.readParallelTranslations() } returns emptyList()
         coEvery { localReadingStorage.saveParallelTranslations(any()) } returns Unit
 
@@ -162,7 +162,7 @@ class BibleReadingRepositoryTest : BaseUnitTest() {
     @Test
     fun `test clearParallelTranslation()`() = runTest {
         coEvery { localReadingStorage.readCurrentVerseIndex() } returns VerseIndex(1, 2, 3)
-        coEvery { localReadingStorage.readCurrentTranslation() } returns MockContents.kjvShortName
+        coEvery { localReadingStorage.readCurrentTranslation() } returns "NLT"
         coEvery { localReadingStorage.readParallelTranslations() } returns emptyList()
         coEvery { localReadingStorage.saveParallelTranslations(any()) } returns Unit
 
@@ -186,6 +186,27 @@ class BibleReadingRepositoryTest : BaseUnitTest() {
         // has cache now, read from there
         coEvery { localReadingStorage.readBookNames(any()) } throws IllegalStateException("Should read from in-memory cache")
         assertEquals(MockContents.kjvBookNames, bibleReadingRepository.readBookNames(MockContents.kjvShortName))
+    }
+
+    @Test
+    fun `switching to a parallel translation removes duplicates and supports deselection`() = runTest {
+        coEvery { localReadingStorage.readCurrentVerseIndex() } returns VerseIndex(0, 0, 0)
+        coEvery { localReadingStorage.readCurrentTranslation() } returns "UKJV"
+        coEvery { localReadingStorage.readParallelTranslations() } returns listOf("NLT")
+        coEvery { localReadingStorage.saveCurrentTranslation(any()) } returns Unit
+        coEvery { localReadingStorage.saveParallelTranslations(any()) } returns Unit
+        val repository = BibleReadingRepository(localReadingStorage, testScope)
+        repository.parallelTranslations.first()
+        repository.saveCurrentTranslation("NLT")
+        repository.requestParallelTranslation("NLT")
+        assertEquals("NLT", repository.currentTranslation.first())
+        assertEquals(emptyList(), repository.parallelTranslations.first())
+        repository.requestParallelTranslation("UKJV")
+        repository.requestParallelTranslation("UKJV")
+        assertEquals(listOf("UKJV"), repository.parallelTranslations.first())
+        repository.removeParallelTranslation("UKJV")
+        assertEquals(emptyList(), repository.parallelTranslations.first())
+        coVerify { localReadingStorage.saveParallelTranslations(emptyList()) }
     }
 
     @Test

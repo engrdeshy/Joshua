@@ -158,6 +158,7 @@ class ReadingViewModel @Inject constructor(
 
             val currentTranslation = bibleReadingManager.currentTranslation().firstNotEmpty()
             val parallelTranslations = bibleReadingManager.parallelTranslations().first()
+                .filter { it != currentTranslation }.distinct()
             val verses = if (parallelTranslations.isEmpty()) {
                 bibleReadingManager.readVerses(currentTranslation, bookIndex, chapterIndex)
             } else {

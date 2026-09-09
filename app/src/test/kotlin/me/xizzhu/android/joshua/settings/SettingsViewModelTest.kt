@@ -117,7 +117,7 @@ class SettingsViewModelTest : BaseUnitTest() {
         bodyTextSizePx = Settings.DEFAULT.getPrimaryTextSize(app.resources).roundToInt(),
         captionTextSizePx = Settings.DEFAULT.getSecondaryTextSize(app.resources).roundToInt(),
         keepScreenOn = Settings.DEFAULT.keepScreenOn,
-        nightModeStringRes = R.string.settings_text_night_mode_off,
+        nightModeStringRes = R.string.settings_text_night_mode_on,
         simpleReadingModeOn = Settings.DEFAULT.simpleReadingModeOn,
         hideSearchButton = Settings.DEFAULT.hideSearchButton,
         consolidateVersesForSharing = Settings.DEFAULT.consolidateVersesForSharing,
@@ -177,13 +177,13 @@ class SettingsViewModelTest : BaseUnitTest() {
     fun `test saveNightMode()`() = runTest {
         mockkStatic(AppCompatDelegate::class)
         every { settingsManager.settings() } returns flowOf(Settings.DEFAULT)
-        coEvery { settingsManager.saveSettings(Settings.DEFAULT.copy(nightMode = Settings.NIGHT_MODE_ON)) } returns Unit
+        coEvery { settingsManager.saveSettings(Settings.DEFAULT.copy(nightMode = Settings.NIGHT_MODE_OFF)) } returns Unit
 
         settingsViewModel.saveNightMode(nightMode = Settings.NIGHT_MODE_OFF)
         settingsViewModel.saveNightMode(nightMode = Settings.NIGHT_MODE_ON)
 
-        coVerify(exactly = 1) { settingsManager.saveSettings(Settings.DEFAULT.copy(nightMode = Settings.NIGHT_MODE_ON)) }
-        verify(exactly = 1) { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) }
+        coVerify(exactly = 1) { settingsManager.saveSettings(Settings.DEFAULT.copy(nightMode = Settings.NIGHT_MODE_OFF)) }
+        verify(exactly = 1) { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) }
         assertEquals(createDefaultViewState(), settingsViewModel.viewState().first())
 
         coEvery { settingsManager.saveSettings(Settings.DEFAULT.copy(nightMode = Settings.NIGHT_MODE_FOLLOW_SYSTEM)) } returns Unit
@@ -205,17 +205,17 @@ class SettingsViewModelTest : BaseUnitTest() {
     @Test
     fun `test saveSimpleReadingModeOn()`() = runTest {
         every { settingsManager.settings() } returns flowOf(Settings.DEFAULT)
-        coEvery { settingsManager.saveSettings(Settings.DEFAULT.copy(simpleReadingModeOn = true)) } returns Unit
+        coEvery { settingsManager.saveSettings(Settings.DEFAULT.copy(simpleReadingModeOn = false)) } returns Unit
 
         settingsViewModel.saveSimpleReadingModeOn(simpleReadingModeOn = false)
         settingsViewModel.saveSimpleReadingModeOn(simpleReadingModeOn = true)
 
-        coVerify(exactly = 1) { settingsManager.saveSettings(Settings.DEFAULT.copy(simpleReadingModeOn = true)) }
+        coVerify(exactly = 1) { settingsManager.saveSettings(Settings.DEFAULT.copy(simpleReadingModeOn = false)) }
         assertEquals(createDefaultViewState(), settingsViewModel.viewState().first())
 
-        coEvery { settingsManager.saveSettings(Settings.DEFAULT.copy(simpleReadingModeOn = true)) } throws RuntimeException("random exception")
+        coEvery { settingsManager.saveSettings(Settings.DEFAULT.copy(simpleReadingModeOn = false)) } throws RuntimeException("random exception")
 
-        settingsViewModel.saveSimpleReadingModeOn(simpleReadingModeOn = true)
+        settingsViewModel.saveSimpleReadingModeOn(simpleReadingModeOn = false)
 
         assertEquals(
             createDefaultViewState().copy(error = SettingsViewModel.ViewState.Error.SettingsUpdatingError),
@@ -316,7 +316,7 @@ class SettingsViewModelTest : BaseUnitTest() {
         assertEquals(
             createDefaultViewState().copy(
                 nightModeSelection = SettingsViewModel.ViewState.NightModeSelection(
-                    currentPosition = 1,
+                    currentPosition = 0,
                     availableModes = listOf(
                         SettingsViewModel.ViewState.NightModeSelection.NightMode(Settings.NIGHT_MODE_ON, R.string.settings_text_night_mode_on),
                         SettingsViewModel.ViewState.NightModeSelection.NightMode(Settings.NIGHT_MODE_OFF, R.string.settings_text_night_mode_off),

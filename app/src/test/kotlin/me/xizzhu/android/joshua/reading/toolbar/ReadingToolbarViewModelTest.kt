@@ -18,6 +18,7 @@ package me.xizzhu.android.joshua.reading.toolbar
 
 import android.app.Application
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlin.test.BeforeTest
@@ -261,6 +262,16 @@ class ReadingToolbarViewModelTest : BaseUnitTest() {
             ),
             readingToolbarViewModel.viewState().first()
         )
+    }
+
+    @Test
+    fun `unchecking primary promotes the remaining selected translation`() = runTest {
+        every { bibleReadingManager.currentTranslation() } returns flowOf("UKJV")
+        every { bibleReadingManager.parallelTranslations() } returns flowOf(listOf("NLT"))
+        coEvery { bibleReadingManager.saveCurrentTranslation("NLT") } returns Unit
+        readingToolbarViewModel.removeParallelTranslation("UKJV")
+        coVerify(exactly = 1) { bibleReadingManager.saveCurrentTranslation("NLT") }
+        assertEquals(null, readingToolbarViewModel.viewState().first().error)
     }
 
     @Test

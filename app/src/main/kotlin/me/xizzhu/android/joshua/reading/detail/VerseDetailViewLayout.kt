@@ -109,6 +109,15 @@ class VerseDetailViewLayout : FrameLayout {
         adapter.settings = settings
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val desired = (300 * resources.displayMetrics.density).toInt()
+        val available = (MeasureSpec.getSize(heightMeasureSpec) - paddingTop - paddingBottom).coerceAtLeast(0)
+        viewBinding.detailPanel.layoutParams.height = if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.UNSPECIFIED) {
+            desired
+        } else minOf(desired, available)
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
     fun setBookmarked(bookmarked: Boolean) {
         adapter.verseDetail?.bookmarked = bookmarked
         viewBinding.bookmark.colorFilter = if (bookmarked) ON_COLOR_FILTER else OFF_COLOR_FILTER

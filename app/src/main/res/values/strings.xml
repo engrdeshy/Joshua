@@ -169,4 +169,7 @@
         <item>By date</item>
         <item>By book</item>
     </string-array>
+    <string name="reminder_morning">Morning reminder</string>
+    <string name="reminder_afternoon">Afternoon reminder</string>
+    <string name="reminder_night">Night reminder</string>
 </resources>

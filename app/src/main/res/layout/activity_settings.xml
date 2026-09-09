@@ -95,7 +95,7 @@
                 android:minHeight="@dimen/item_height"
                 android:paddingStart="@dimen/padding"
                 android:paddingEnd="@dimen/padding"
-                android:text="@string/settings_title_reading_reminder" />
+                android:text="@string/reminder_night" />
 
             <me.xizzhu.android.joshua.settings.widgets.SettingButton
                 android:id="@+id/reminder_time"
@@ -103,6 +103,33 @@
                 android:layout_height="wrap_content"
                 app:settingButtonTitle="@string/settings_title_reminder_time" />
 
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/morning_reminder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/item_height"
+                android:paddingStart="@dimen/padding"
+                android:paddingEnd="@dimen/padding"
+                android:text="@string/reminder_morning" />
+            <me.xizzhu.android.joshua.settings.widgets.SettingButton
+                android:id="@+id/morning_reminder_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:settingButtonTitle="@string/settings_title_reminder_time" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/afternoon_reminder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/item_height"
+                android:paddingStart="@dimen/padding"
+                android:paddingEnd="@dimen/padding"
+                android:text="@string/reminder_afternoon" />
+            <me.xizzhu.android.joshua.settings.widgets.SettingButton
+                android:id="@+id/afternoon_reminder_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:settingButtonTitle="@string/settings_title_reminder_time" />
             <me.xizzhu.android.joshua.settings.widgets.SettingSectionHeader
                 android:id="@+id/privacy"
                 android:layout_width="match_parent"
