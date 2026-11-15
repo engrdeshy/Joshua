@@ -45,6 +45,8 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".settings.SettingsActivity" />
+        <activity android:name=".evangelism.EvangelismActivity"
+            android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".strongnumber.StrongNumberActivity" />
         <activity android:name=".translations.TranslationsActivity" />
 

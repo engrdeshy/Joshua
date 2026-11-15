@@ -17,12 +17,14 @@
 package me.xizzhu.android.joshua.reading.toolbar
 
 import android.content.Context
+import android.content.Intent
 import android.util.AttributeSet
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Spinner
 import com.google.android.material.appbar.MaterialToolbar
 import me.xizzhu.android.joshua.R
+import me.xizzhu.android.joshua.evangelism.EvangelismActivity
 
 class ReadingToolbar : MaterialToolbar {
     sealed class ViewEvent {
@@ -96,6 +98,10 @@ class ReadingToolbar : MaterialToolbar {
                 }
                 R.id.action_search -> {
                     onViewEvent(ViewEvent.OpenSearch)
+                    true
+                }
+                R.id.action_evangelism -> {
+                    context.startActivity(Intent(context, EvangelismActivity::class.java))
                     true
                 }
                 R.id.action_settings -> {

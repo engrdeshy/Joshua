@@ -172,4 +172,5 @@
     <string name="reminder_morning">Morning reminder</string>
     <string name="reminder_afternoon">Afternoon reminder</string>
     <string name="reminder_night">Night reminder</string>
+    <string name="action_evangelism">Personal evangelism</string>
 </resources>
