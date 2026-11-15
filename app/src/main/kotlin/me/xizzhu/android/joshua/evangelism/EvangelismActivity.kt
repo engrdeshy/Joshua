@@ -2,6 +2,7 @@ package me.xizzhu.android.joshua.evangelism
 
 import android.os.Bundle
 import android.text.InputType
+import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.WindowManager.LayoutParams.FLAG_SECURE
@@ -223,17 +224,18 @@ class EvangelismActivity : AppCompatActivity() {
         val prayer = form.field("Prayer request", multiline = true)
         form.heading("Outcome")
         val outcomes = android.widget.RadioGroup(this)
-        Status.values().forEachIndexed { position, state ->
+        val outcomeIds = Status.values().associateWith { View.generateViewId() }
+        outcomeIds.forEach { (state, viewId) ->
             outcomes.addView(com.google.android.material.radiobutton.MaterialRadioButton(this).apply {
-                id = position + 1
+                id = viewId
                 text = if (state == Status.ACTIVE) "Continue weekly follow-up" else state.label
                 minimumHeight = dp(48)
             })
         }
-        outcomes.check(1)
+        outcomes.check(outcomeIds.getValue(Status.ACTIVE))
         form.addView(outcomes)
         formDialog("Log follow-up", form) {
-            val outcome = Status.values()[outcomes.checkedRadioButtonId - 1]
+            val outcome = outcomeIds.entries.first { it.value == outcomes.checkedRadioButtonId }.key
             if (outcome == Status.ACTIVE && discussion.value().isBlank() && prayer.value().isBlank()) {
                 discussion.error = "Enter a summary or prayer request"
                 false
