@@ -58,6 +58,7 @@ class EvangelismActivity : AppCompatActivity() {
         val root = column()
         toolbar = MaterialToolbar(this).apply {
             setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
+            setNavigationIconTint(MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurface))
             navigationContentDescription = "Back"
             setNavigationOnClickListener { back() }
         }

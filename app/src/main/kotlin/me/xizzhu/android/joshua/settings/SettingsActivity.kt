@@ -36,6 +36,7 @@ import me.xizzhu.android.joshua.databinding.ActivitySettingsBinding
 import me.xizzhu.android.joshua.ui.toast
 import me.xizzhu.android.joshua.infra.BaseActivityV2
 import me.xizzhu.android.joshua.reminders.ReadingReminderManager
+import me.xizzhu.android.joshua.reminders.ReadingReminderManager.Companion.SOUL_WINNING_SLOT
 import me.xizzhu.android.joshua.ui.indeterminateProgressDialog
 import me.xizzhu.android.joshua.ui.listDialog
 import me.xizzhu.android.joshua.ui.seekBarDialog
@@ -107,6 +108,12 @@ class SettingsActivity : BaseActivityV2<ActivitySettingsBinding, SettingsViewMod
         }
         morningReminderTime.setOnSingleClickListener { selectReminderTime(1) }
         afternoonReminderTime.setOnSingleClickListener { selectReminderTime(2) }
+        soulWinningReminder.setOnClickListener {
+            if (soulWinningReminder.isChecked) requestEnableReminder(SOUL_WINNING_SLOT)
+            else ReadingReminderManager(applicationContext, SOUL_WINNING_SLOT).setEnabled(false)
+            updateReminderControls()
+        }
+        soulWinningReminderTime.setOnSingleClickListener { selectReminderTime(SOUL_WINNING_SLOT) }
         updateReminderControls()
     }
 
@@ -171,6 +178,8 @@ class SettingsActivity : BaseActivityV2<ActivitySettingsBinding, SettingsViewMod
         afternoonReminder.setTextSize(TypedValue.COMPLEX_UNIT_PX, bodyTextSizePx.toFloat())
         morningReminderTime.setTextSize(bodyTextSizePx, captionTextSizePx)
         afternoonReminderTime.setTextSize(bodyTextSizePx, captionTextSizePx)
+        soulWinningReminder.setTextSize(TypedValue.COMPLEX_UNIT_PX, bodyTextSizePx.toFloat())
+        soulWinningReminderTime.setTextSize(bodyTextSizePx, captionTextSizePx)
         privacy.setTextSize(bodyTextSizePx)
         privacySummary.setTextSize(bodyTextSizePx, captionTextSizePx)
         backupRestore.setTextSize(bodyTextSizePx)
@@ -216,6 +225,9 @@ class SettingsActivity : BaseActivityV2<ActivitySettingsBinding, SettingsViewMod
         afternoonReminder.isChecked = afternoon.isEnabled
         morningReminderTime.setDescription(morning.formattedTime())
         afternoonReminderTime.setDescription(afternoon.formattedTime())
+        val scripture = ReadingReminderManager(applicationContext, SOUL_WINNING_SLOT)
+        soulWinningReminder.isChecked = scripture.isEnabled
+        soulWinningReminderTime.setDescription(scripture.formattedTime())
     }
 
     private fun SettingsViewModel.ViewState.BackupRestoreState.handle(isBackup: Boolean) {

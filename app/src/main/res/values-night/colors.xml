@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="primary">#A8DFC9</color>
+    <color name="on_primary">#11382D</color>
+    <color name="secondary">#B6CCC2</color>
 
     <color name="verse_pressed">#888888</color>
     <color name="verse_selected">#888888</color>

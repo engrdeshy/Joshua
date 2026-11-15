@@ -130,6 +130,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:settingButtonTitle="@string/settings_title_reminder_time" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/soul_winning_reminder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/item_height"
+                android:paddingStart="@dimen/padding"
+                android:paddingEnd="@dimen/padding"
+                android:text="@string/soul_winning_reminder" />
+            <me.xizzhu.android.joshua.settings.widgets.SettingButton
+                android:id="@+id/soul_winning_reminder_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:settingButtonTitle="@string/soul_winning_reminder_time" />
             <me.xizzhu.android.joshua.settings.widgets.SettingSectionHeader
                 android:id="@+id/privacy"
                 android:layout_width="match_parent"

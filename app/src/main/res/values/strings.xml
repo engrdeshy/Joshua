@@ -173,4 +173,16 @@
     <string name="reminder_afternoon">Afternoon reminder</string>
     <string name="reminder_night">Night reminder</string>
     <string name="action_evangelism">Personal evangelism</string>
+    <string name="soul_winning_reminder">Daily Soul Winning scripture</string>
+    <string name="soul_winning_reminder_time">Soul Winning scripture time</string>
+    <string name="soul_winning_channel_description">A daily Bible verse about sharing the gospel.</string>
+    <string-array name="soul_winning_scriptures">
+        <item>Proverbs 11:30 (KJV)\nThe fruit of the righteous is a tree of life; and he that winneth souls is wise.</item>
+        <item>Mark 16:15 (KJV)\nAnd he said unto them, Go ye into all the world, and preach the gospel to every creature.</item>
+        <item>Matthew 9:37 (KJV)\nThen saith he unto his disciples, The harvest truly is plenteous, but the labourers are few;</item>
+        <item>Romans 10:17 (KJV)\nSo then faith cometh by hearing, and hearing by the word of God.</item>
+        <item>2 Timothy 4:2 (KJV)\nPreach the word; be instant in season, out of season; reprove, rebuke, exhort with all longsuffering and doctrine.</item>
+        <item>John 4:35 (KJV)\nSay not ye, There are yet four months, and then cometh harvest? behold, I say unto you, Lift up your eyes, and look on the fields; for they are white already to harvest.</item>
+        <item>Daniel 12:3 (KJV)\nAnd they that be wise shall shine as the brightness of the firmament; and they that turn many to righteousness as the stars for ever and ever.</item>
+    </string-array>
 </resources>

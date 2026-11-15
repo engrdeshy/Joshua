@@ -2,6 +2,7 @@
 <resources>
 
     <color name="primary">#0038b8</color>
+    <color name="on_primary">#FFFFFF</color>
     <color name="secondary">#7851a9</color>
 
     <color name="verse_pressed">@color/light_gray</color>

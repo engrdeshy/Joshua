@@ -26,7 +26,7 @@ import me.xizzhu.android.joshua.R
 import me.xizzhu.android.joshua.reading.ReadingActivity
 
 class ReadingReminderManager(private val context: Context, val slot: Int = 0) {
-    init { require(slot in 0..2) }
+    init { require(slot in 0..SOUL_WINNING_SLOT) }
     private val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
     private fun key(name: String): String = if (slot == 0) name else "${name}_$slot"
 
@@ -34,7 +34,7 @@ class ReadingReminderManager(private val context: Context, val slot: Int = 0) {
         get() = preferences.getBoolean(key(KEY_ENABLED), false)
 
     val hour: Int
-        get() = preferences.getInt(key(KEY_HOUR), listOf(DEFAULT_HOUR, 7, 13)[slot])
+        get() = preferences.getInt(key(KEY_HOUR), listOf(DEFAULT_HOUR, 7, 13, 8)[slot])
 
     val minute: Int
         get() = preferences.getInt(key(KEY_MINUTE), DEFAULT_MINUTE)
@@ -90,6 +90,7 @@ class ReadingReminderManager(private val context: Context, val slot: Int = 0) {
     )
 
     companion object {
+        internal const val SOUL_WINNING_SLOT = 3
         private const val PREFERENCES_NAME = "reading_reminder"
         private const val KEY_ENABLED = "enabled"
         private const val KEY_HOUR = "hour"
@@ -120,25 +121,38 @@ class ReadingReminderManager(private val context: Context, val slot: Int = 0) {
 
         private fun immutableFlag(): Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
 
-        internal fun showNotification(context: Context) {
+        internal fun showNotification(context: Context, slot: Int = 0) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
                 ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
 
             val manager = NotificationManagerCompat.from(context)
             if (!manager.areNotificationsEnabled()) return
+            val scripture = slot == SOUL_WINNING_SLOT
+            val channelId = if (scripture) "soul_winning_scripture" else CHANNEL_ID
+            val title = if (scripture) R.string.soul_winning_reminder else R.string.reminder_title
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val channel = NotificationChannel(
-                    CHANNEL_ID,
-                    context.getString(R.string.reminder_channel_name),
+                    channelId,
+                    context.getString(if (scripture) title else R.string.reminder_channel_name),
                     NotificationManager.IMPORTANCE_DEFAULT
-                ).apply { description = context.getString(R.string.reminder_channel_description) }
+                ).apply {
+                    description = context.getString(
+                        if (scripture) R.string.soul_winning_channel_description else R.string.reminder_channel_description
+                    )
+                }
                 (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
             }
 
             val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
             val chapter = preferences.getString(KEY_CHAPTER, null)
-            val message = if (chapter.isNullOrBlank()) {
+            val message = if (scripture) {
+                val verses = context.resources.getStringArray(R.array.soul_winning_scriptures)
+                val now = System.currentTimeMillis()
+                val localDay = (now + TimeZone.getDefault().getOffset(now)) / 86_400_000L
+                val index = ((localDay % verses.size + verses.size) % verses.size).toInt()
+                verses[index]
+            } else if (chapter.isNullOrBlank()) {
                 context.getString(R.string.reminder_message_current_chapter)
             } else {
                 context.getString(R.string.reminder_message_chapter, chapter)
@@ -149,16 +163,17 @@ class ReadingReminderManager(private val context: Context, val slot: Int = 0) {
                 Intent(context, ReadingActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP),
                 PendingIntent.FLAG_UPDATE_CURRENT or immutableFlag()
             )
-            val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            val notification = NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_bookmark)
-                .setContentTitle(context.getString(R.string.reminder_title))
+                .setContentTitle(context.getString(title))
                 .setContentText(message)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(message))
                 .setContentIntent(contentIntent)
                 .setAutoCancel(true)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
                 .build()
-            manager.notify(NOTIFICATION_ID, notification)
+            manager.notify(if (scripture) NOTIFICATION_ID + SOUL_WINNING_SLOT else NOTIFICATION_ID, notification)
         }
     }
 }
@@ -167,12 +182,14 @@ class ReadingReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == ReadingReminderManager.ACTION_SHOW_REMINDER) {
             val slot = intent.getIntExtra(ReadingReminderManager.EXTRA_SLOT, 0)
-            if (slot !in 0..2) return
+            if (slot !in 0..ReadingReminderManager.SOUL_WINNING_SLOT) return
             val manager = ReadingReminderManager(context.applicationContext, slot)
-            if (manager.isEnabled) ReadingReminderManager.showNotification(context)
             manager.rescheduleIfEnabled()
+            if (manager.isEnabled) ReadingReminderManager.showNotification(context, slot)
         } else {
-            (0..2).forEach { ReadingReminderManager(context.applicationContext, it).rescheduleIfEnabled() }
+            (0..ReadingReminderManager.SOUL_WINNING_SLOT).forEach {
+                ReadingReminderManager(context.applicationContext, it).rescheduleIfEnabled()
+            }
         }
     }
 }
